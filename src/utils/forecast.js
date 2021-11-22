@@ -1,16 +1,24 @@
-const request = require('request')
+const fetch = require('node-fetch')
+weatherstackkey = process.env.WEATHERSTACK_APIKEY;
 
 const forecast = (latitude, longitude, callback) => {
-    const url = 'https://api.darksky.net/forecast/9d1465c6f3bb7a6c71944bdd8548d026/' + latitude + ',' + longitude
-
-    request({ url, json: true }, (error, { body }) => {
-        if (error) {
-            callback('Unable to connect to weather service!', undefined)
-        } else if (body.error) {
-            callback('Unable to find location', undefined)
+    // const url = 'https://api.darksky.net/forecast/9d1465c6f3bb7a6c71944bdd8548d026/' + latitude + ',' + longitude
+    
+    const url = 'http://api.weatherstack.com/current?access_key=' + weatherstackkey + '&units=f&query=' + latitude + ',' + longitude;
+    fetch(url)
+    .then(response => response.json())
+    .then(body =>{
+        //console.dir(body, {depth: null});
+        if (!body.current) {
+            callback('Unable to find the location', undefined);
         } else {
-            callback(undefined, body.daily.data[0].summary + ' It is currently ' + body.currently.temperature + ' degress out. This high today is ' + body.daily.data[0].temperatureHigh + ' with a low of ' + body.daily.data[0].temperatureLow + '. There is a ' + body.currently.precipProbability + '% chance of rain.')
+            callback(undefined, "It is currently " + body.current.weather_descriptions[0] + ". The temperature is " + body.current.temperature + "F");            
         }
+    })
+    .catch(error =>{
+        //console.log("we had this error: ", error);
+        callback('Unable to connect to the weather service.', undefined);
+       
     })
 }
 
