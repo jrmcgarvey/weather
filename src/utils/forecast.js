@@ -1,9 +1,7 @@
 const fetch = require('node-fetch')
 weatherstackkey = process.env.WEATHERSTACK_APIKEY;
 
-const forecast = (latitude, longitude, callback) => {
-    // const url = 'https://api.darksky.net/forecast/9d1465c6f3bb7a6c71944bdd8548d026/' + latitude + ',' + longitude
-    
+const forecast = (latitude, longitude, callback) => {   
     const url = 'http://api.weatherstack.com/current?access_key=' + weatherstackkey + '&units=f&query=' + latitude + ',' + longitude;
     fetch(url)
     .then(response => response.json())
